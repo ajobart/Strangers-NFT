@@ -12,6 +12,15 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract StrangersNFT is ERC721Enumerable, ERC721Burnable, Ownable, ReentrancyGuard {
 
+   // Résolution d'un conflit 
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override(ERC721, ERC721Enumerable) {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721Enumerable) returns (bool) {
+        return super.supportsInterface(interfaceId);
+    }
+
     //Pour increment l'id des NFTs
     using Counters for Counters.Counter;
 
