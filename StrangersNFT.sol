@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract StrangersNFT is ERC721Enumerable, ERC721Burnable, Ownable, ReentrancyGuard {
 
-   // Résolution d'un conflit 
+    // Résolution d'un conflit 
     function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override(ERC721, ERC721Enumerable) {
         super._beforeTokenTransfer(from, to, tokenId);
     }
@@ -34,7 +34,7 @@ contract StrangersNFT is ERC721Enumerable, ERC721Burnable, Ownable, ReentrancyGu
     Counters.Counter private _nftIdCounter;
 
     //Le nombre de NFTs dans la collection
-    uint public constant MAX_SUPPLY = (?);
+    uint public constant MAX_SUPPLY = 100;
     //Le nombre maximum de NFTs qu'une adresse peut mint
     uint public max_mint_allowed = (?);
     //Prix d'un NFT pendant la presale
@@ -65,7 +65,7 @@ contract StrangersNFT is ERC721Enumerable, ERC721Burnable, Ownable, ReentrancyGu
     }
 
     Steps public sellingStep;
-
+    
     //Owner du smart contract
     address private _owner;
 
@@ -185,7 +185,7 @@ contract StrangersNFT is ERC721Enumerable, ERC721Burnable, Ownable, ReentrancyGu
         nftsPerWallet[msg.sender] += _ammount;
         //Si l'utilisateur à minté le dernier NFTs disponible
         if(numberNftSold + _ammount == MAX_SUPPLY) {
-            sellingStep = Steps.SoldOut;
+            sellingStep = Steps.SoldOut;   
         }
         //Minting all the account NFTs
         for(uint i = 1 ; i <= _ammount ; i++) {
@@ -194,7 +194,7 @@ contract StrangersNFT is ERC721Enumerable, ERC721Burnable, Ownable, ReentrancyGu
     }
 
     //Pour burn un NFT
-    function burn(uint _nftId) external onlyOwner {
+    function burn(uint _nftId) public virtual override onlyOwner {
         _burn(_nftId);
     }
 
@@ -203,7 +203,7 @@ contract StrangersNFT is ERC721Enumerable, ERC721Burnable, Ownable, ReentrancyGu
         return _verify(_leaf(account), proof);
     }
 
-
+    
     //Retourne le hash du compte
     function _leaf(address account) internal pure returns(bytes32) {
         return keccak256(abi.encodePacked(account));
@@ -214,23 +214,23 @@ contract StrangersNFT is ERC721Enumerable, ERC721Burnable, Ownable, ReentrancyGu
         return MerkleProof.verify(proof, merkleRoot, leaf);
     }
 
-
+    
     //Pour avoir l'URI complète d'un NFT spécifique avec son ID
     function tokenURI(uint _nftId) public view override(ERC721) returns (string memory) {
         require(_exists(_nftId), "This NFT doesn't exist.");
         if(revealed == false) {
             return notRevealedURI;
         }
-
+        
         string memory currentBaseURI = _baseURI();
-        return
-            bytes(currentBaseURI).length > 0
+        return 
+            bytes(currentBaseURI).length > 0 
             ? string(abi.encodePacked(currentBaseURI, _nftId.toString(), baseExtension))
             : "";
     }
 
     //Pour retirer l'argent
-    function withdraw() public payable onlyOwner {
+    function withdraw() public payable onlyOwner {    
         (bool success, ) = payable(owner()).call{value: address(this).balance}("");
         require(success);
     }
