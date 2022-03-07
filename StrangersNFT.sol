@@ -222,7 +222,7 @@ contract StrangersNFT is ERC721Enumerable, ERC721Burnable, Ownable, ReentrancyGu
 
     //Pour retirer l'argent
     function withdraw() public payable onlyOwner {
-        (bool success, ) = payable(_owner()).call{value: address(this).balance}("");
+        (bool success, ) = payable(owner()).call{value: address(this).balance}("");
         require(success);
     }
 }
