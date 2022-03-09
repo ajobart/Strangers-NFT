@@ -34,7 +34,7 @@ contract StrangersNFT is ERC721Enumerable, ERC721Burnable, Ownable, ReentrancyGu
     Counters.Counter private _nftIdCounter;
 
     //Le nombre de NFTs dans la collection
-    uint public constant MAX_SUPPLY = 100;
+    uint public constant MAX_SUPPLY = (?);
     //Le nombre maximum de NFTs qu'une adresse peut mint
     uint public max_mint_allowed = (?);
     //Prix d'un NFT pendant la presale
