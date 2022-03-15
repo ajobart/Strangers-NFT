@@ -11,7 +11,6 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 
 contract StrangersNFT is ERC721Enumerable, ERC721Burnable, Ownable, ReentrancyGuard {
-
     // Résolution d'un conflit 
     function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override(ERC721, ERC721Enumerable) {
         super._beforeTokenTransfer(from, to, tokenId);
@@ -33,14 +32,10 @@ contract StrangersNFT is ERC721Enumerable, ERC721Burnable, Ownable, ReentrancyGu
     //Id du prochain NFT à minté
     Counters.Counter private _nftIdCounter;
 
-    //Le nombre de NFTs dans la collection
-    uint public constant MAX_SUPPLY = (?);
-    //Le nombre maximum de NFTs qu'une adresse peut mint
-    uint public max_mint_allowed = (?);
-    //Prix d'un NFT pendant la presale
-    uint public pricePresale = (?) ether;
-    //Prix d'un NFT pendant la sale
-    uint public priceSale = (?) ether;
+    uint public constant MAX_SUPPLY = 100;
+    uint public max_mint_allowed = 10;
+    uint public pricePresale = 0.0025 ether;
+    uint public priceSale = 0.015 ether;
 
     //URI des NFTs quand ils sont reveal
     string public baseURI;
@@ -145,7 +140,7 @@ contract StrangersNFT is ERC721Enumerable, ERC721Burnable, Ownable, ReentrancyGu
         sellingStep = Steps.Sale;
     }
 
-    //Pour minté un NFT si l'utilisateur est dans la whitelist
+    //Pour minté un NFT si l'utilisateur est dans la whitelist lors de presale
     function presaleMint(address _account, bytes32[] calldata _proof) external payable nonReentrant {
         //Vérifie si on est en presale ?
         require(sellingStep == Steps.Presale, "Presale has not started yet.");
@@ -165,7 +160,7 @@ contract StrangersNFT is ERC721Enumerable, ERC721Burnable, Ownable, ReentrancyGu
         _nftIdCounter.increment();
     }
 
-    //Pour minté les NFTs
+    //Pour minté les NFTs en public/sale
     function saleMint(uint256 _ammount) external payable nonReentrant {
         //On réccupère le nombre de NFT vendus
         uint numberNftSold = totalSupply();
@@ -178,7 +173,7 @@ contract StrangersNFT is ERC721Enumerable, ERC721Burnable, Ownable, ReentrancyGu
         //Vérifie si l'utilisateur à assez d'ethers pour acheter
         require(msg.value >= price * _ammount, "Not enought funds.");
         //L'utilisateur ne peut mint que un certain montant de NFTs
-        require(_ammount <= max_mint_allowed, "You can't mint more than (?) tokens");
+        require(_ammount <= max_mint_allowed, "You can't mint more than (3) tokens");
         //Si l'utilisateur essaye de minté un token non existant
         require(numberNftSold + _ammount <= MAX_SUPPLY, "Sale is almost done and we don't have enought NFTs left.");
         //On incrémente le montant de NFTs minté par l'utilisateur
